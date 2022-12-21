@@ -1,31 +1,48 @@
-<?php
-// Include the config file
-include_once 'config.php';
+<?php include('./server.php')?>
 
-// Prepare a SELECT statement
-$sql = "SELECT id, name, address, salary FROM table_employees";
-$stmt = $conn->prepare($sql);
+<?php 
 
-// Execute the statement
-$stmt->execute();
 
-// Fetch the results
-$table_employees = $stmt->fetchAll();
+$stmt = $conn->query('SELECT * FROM table_employees');
 
-// Close the statement
-$stmt->closeCursor();
+echo'<body style="background-color:#dddeff; margin-top:12.5%; >';
+echo '<div style="margin-top:50%; >';
+echo '<form action="./create.php">
+<button type="submit" style="margin-left:12.5%; margin-bottom:50px ; background-color:#000379; color:white; width:150px; height:60px; font-size:15px">Add an employee</button>
+</form>';
 
-// Loop through the employees and display them in a table
-echo '<table>';
-echo '<tr><th>ID</th><th>Full Name</th><th>Address</th><th>Salary</th><th>Actions</th></tr>';
-foreach ($table_employees as $employee) {
-  echo '<tr>';
-  echo '<td>' . $employee['Id'] . '</td>';
-  echo '<td>' . $employee['name'] . '</td>';
-  echo '<td>' . $employee['Address'] . '</td>';
-  echo '<td>' . $employee['Salary'] . '</td>';
-  echo '<td>';
-  // Add buttons for viewing, updating, and deleting the employee
-  echo '<a href="read.php?id=' . $employee['Id'] . '">View</a> ';
-  echo '<a href="update.php?id=' . $employee['Id'];
+echo'<table style="border: 2px solid black; margin:auto; width:75% ; border-collapse: collapse; text-align:center; background-color:white; font-size:20px">';
+echo '<tr style="height:50px">';
+    echo "<td style='border: 2px solid silver'>#</td>";
+    echo "<td style='border: 2px solid silver'>Name</td>";
+    echo "<td style='border: 2px solid silver'>Address</td>";
+    echo "<td style='border: 2px solid silver'>Salary</td>";
+    echo "<td style='border: 2px solid silver'>Edit</td>";
+    echo "<td style='border: 2px solid silver'>Delete</td>";
+echo '</tr>';
+
+foreach ($stmt as $data){
+    if ($data['is_deleted' == "0"]){
+        echo '<tr style="height:50px">';
+        echo "<td style='border: 2px solid silver'>".$data['id']."</td>";
+        echo "<td style='border: 2px solid silver'>".$data['name']."</td>";
+        echo "<td style='border: 2px solid silver'>".$data['address']."</td>";
+        echo "<td style='border: 2px solid silver'>".$data['salary']."</td>";
+        echo "<td style='border: 2px solid silver'>
+                <form action=''>
+                    <button type='submit'><a href='edit.php?editid=".$data['id']."'>Edit</a></button>
+                </form>
+        </td>";
+        echo "<td style='border: 2px solid silver'>
+                <form action='./delete.php'>
+                    <button type='submit'><a href='delete.php?deleteid=".$data['id']."'>Delete</a></button>
+                </form>
+            </td>";
+        echo '</tr>';
+    }
 }
+
+echo '</table>';
+
+echo '</div>';
+echo'</body>';
